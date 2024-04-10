@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Scaffold
     env:
-      VSPHERE_SERVER: ${{ secrets.VSPHERE_SERVER }}
       VSPHERE_ALLOW_UNVERIFIED_SSL: true
     defaults:
       run:
