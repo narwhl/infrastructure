@@ -3,9 +3,9 @@ terraform {
     key = "states/infrastructure/scaffold/terraform.tfstate"
   }
   required_providers {
-    vsphere = {
-      source  = "hashicorp/vsphere"
-      version = "2.7.0"
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "~> 0.50.0"
     }
   }
 }
