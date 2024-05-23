@@ -34,73 +34,73 @@ data "http" "talos_customization" {
   })
 }
 
-resource "talos_machine_secrets" "this" {}
+# resource "talos_machine_secrets" "this" {}
 
-data "talos_machine_configuration" "machines" {
-  for_each         = merge(local.controlplanes, local.workers)
-  cluster_name     = local.cluster_name
-  cluster_endpoint = var.cluster_endpoint
-  machine_type     = each.value.role
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
-  config_patches = [
-    yamlencode({
-      machine = {
-        install = {
-          extensions = [
-            {
-              image = "ghcr.io/siderolabs/qemu-guest-agent:8.2.2"
-            }
-          ]
-        }
-        network = {
-          interfaces = [
-            {
-              interface = module.nodes[each.key].interface_name
-              addresses = [
-                format(
-                  "%s/%s",
-                  "${cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc[each.value.role].address_start + each.value.idx)}",
-                  var.network.suffix
-                )
-              ]
-              routes = [
-                {
-                  network = "0.0.0.0/0"
-                  gateway = cidrhost("${var.network.block}/${var.network.suffix}", 1)
-                }
-              ]
-            }
-          ]
-        }
-      }
-      cluster = {
-        apiServer = {
-          extraArgs = {
-            "anonymous-auth" = true
-          }
-        }
-      }
-    })
-  ]
-}
+# data "talos_machine_configuration" "machines" {
+#   for_each         = merge(local.controlplanes, local.workers)
+#   cluster_name     = local.cluster_name
+#   cluster_endpoint = var.cluster_endpoint
+#   machine_type     = each.value.role
+#   machine_secrets  = talos_machine_secrets.this.machine_secrets
+#   config_patches = [
+#     yamlencode({
+#       machine = {
+#         install = {
+#           extensions = [
+#             {
+#               image = "ghcr.io/siderolabs/qemu-guest-agent:8.2.2"
+#             }
+#           ]
+#         }
+#         network = {
+#           interfaces = [
+#             {
+#               interface = module.nodes[each.key].interface_name
+#               addresses = [
+#                 format(
+#                   "%s/%s",
+#                   "${cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc[each.value.role].address_start + each.value.idx)}",
+#                   var.network.suffix
+#                 )
+#               ]
+#               routes = [
+#                 {
+#                   network = "0.0.0.0/0"
+#                   gateway = cidrhost("${var.network.block}/${var.network.suffix}", 1)
+#                 }
+#               ]
+#             }
+#           ]
+#         }
+#       }
+#       cluster = {
+#         apiServer = {
+#           extraArgs = {
+#             "anonymous-auth" = true
+#           }
+#         }
+#       }
+#     })
+#   ]
+# }
 
-resource "talos_machine_configuration_apply" "nodes_config_apply" {
-  for_each                    = merge(local.controlplanes, local.workers)
-  client_configuration        = talos_machine_secrets.this.client_configuration
-  machine_configuration_input = data.talos_machine_configuration.machines[each.key].machine_configuration
-  node                        = module.nodes[each.key].ip_address
-}
+# resource "talos_machine_configuration_apply" "nodes_config_apply" {
+#   for_each                    = merge(local.controlplanes, local.workers)
+#   client_configuration        = talos_machine_secrets.this.client_configuration
+#   machine_configuration_input = data.talos_machine_configuration.machines[each.key].machine_configuration
+#   node                        = module.nodes[each.key].ip_address
+# }
 
-resource "talos_machine_bootstrap" "this" {
-  depends_on           = [talos_machine_configuration_apply.nodes_config_apply]
-  node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
-  client_configuration = talos_machine_secrets.this.client_configuration
-}
+# resource "talos_machine_bootstrap" "this" {
+#   depends_on           = [talos_machine_configuration_apply.nodes_config_apply]
+#   node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
+#   client_configuration = talos_machine_secrets.this.client_configuration
+# }
 
-data "talos_cluster_kubeconfig" "this" {
-  depends_on = [
-    talos_machine_bootstrap.this
-  ]
-  client_configuration = talos_machine_secrets.this.client_configuration
-  node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
-}
+# data "talos_cluster_kubeconfig" "this" {
+#   depends_on = [
+#     talos_machine_bootstrap.this
+#   ]
+#   client_configuration = talos_machine_secrets.this.client_configuration
+#   node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
+# }
