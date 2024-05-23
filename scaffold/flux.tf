@@ -2,9 +2,9 @@ provider "flux" {
   kubernetes = {
     host = data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.host
 
-    client_certificate     = terraform_data.kubernetes_credentials.output.client_certificate
-    client_key             = terraform_data.kubernetes_credentials.output.client_key
-    cluster_ca_certificate = terraform_data.kubernetes_credentials.output.cluster_ca_certificate
+    client_certificate     = base64decode(data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_certificate)
+    client_key             = base64decode(data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_key)
+    cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.ca_certificate)
   }
   git = {
     url = "ssh://git@github.com/${data.external.env.result.GITHUB_REPOSITORY}.git"
