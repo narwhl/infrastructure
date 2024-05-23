@@ -1,6 +1,6 @@
 provider "flux" {
   kubernetes = {
-    host = var.cluster_endpoint
+    host = data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.host
 
     client_certificate     = terraform_data.kubernetes_credentials.output.client_certificate
     client_key             = terraform_data.kubernetes_credentials.output.client_key
