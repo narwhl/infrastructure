@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Scaffold
     env:
+      GITHUB_OWNER: ${{ github.repository_owner }}
       PROXMOX_VE_INSECURE: true
     defaults:
       run:
