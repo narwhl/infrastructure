@@ -55,7 +55,7 @@ data "talos_machine_configuration" "machines" {
         network = {
           interfaces = [
             {
-              interface = [for interface in module.nodes[each.key].network_interface_names : interface if startswith(interface, "enx")][0]
+              interface = module.nodes[each.key].interface_name
               addresses = [
                 format(
                   "%s/%s",
