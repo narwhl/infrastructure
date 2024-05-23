@@ -10,7 +10,8 @@ variable "storage" {
 }
 
 variable "cluster_endpoint" {
-  type = string
+  type    = string
+  default = "https://cluster.k8s.narwhl.dev:6443"
 }
 
 variable "network" {
