@@ -1,3 +1,7 @@
+data "external" "env" {
+  program = ["jq", "-n", "env"]
+}
+
 data "http" "supplychain" {
   url = "https://artifact.narwhl.dev/upstream/current.json"
   request_headers = {
