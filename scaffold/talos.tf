@@ -99,7 +99,7 @@ resource "talos_machine_bootstrap" "this" {
 
 data "talos_cluster_kubeconfig" "this" {
   depends_on = [
-    talos_machine_bootstrap.bootstrap
+    talos_machine_bootstrap.this
   ]
   client_configuration = talos_machine_secrets.this.client_configuration
   node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
