@@ -97,6 +97,14 @@ resource "talos_machine_bootstrap" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
 }
 
+data "talos_cluster_kubeconfig" "this" {
+  depends_on = [
+    talos_machine_bootstrap.bootstrap
+  ]
+  client_configuration = talos_machine_secrets.this.client_configuration
+  node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
+}
+
 resource "terraform_data" "kubernetes_credentials" {
   depends_on = [data.talos_cluster_health.this]
   input = {
