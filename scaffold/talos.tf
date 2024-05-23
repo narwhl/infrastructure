@@ -96,3 +96,12 @@ resource "talos_machine_bootstrap" "this" {
   node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
   client_configuration = talos_machine_secrets.this.client_configuration
 }
+
+resource "terraform_data" "kubernetes_credentials" {
+  depends_on = [data.talos_cluster_health.this]
+  input = {
+    client_certificate     = base64decode(data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_certificate)
+    client_key             = base64decode(data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_key)
+    cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.this.kubernetes_client_configuration.ca_certificate)
+  }
+}
