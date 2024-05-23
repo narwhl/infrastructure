@@ -4,6 +4,7 @@ provider "kubernetes" {
   client_certificate     = terraform_data.kubernetes_credentials.output.client_certificate
   client_key             = terraform_data.kubernetes_credentials.output.client_key
   cluster_ca_certificate = terraform_data.kubernetes_credentials.output.cluster_ca_certificate
+  insecure               = true
 }
 
 resource "kubernetes_cluster_role_binding_v1" "oidc_viewer" {
