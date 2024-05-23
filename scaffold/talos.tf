@@ -105,6 +105,19 @@ data "talos_cluster_kubeconfig" "this" {
   node                 = cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc.controlplane.address_start)
 }
 
+data "talos_cluster_health" "this" {
+  client_configuration = talos_machine_secrets.this.client_configuration
+  control_plane_nodes = [
+    for node in local.controlplanes : "${cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc[node.role].address_start + node.idx)}"
+  ]
+  endpoints = [
+    for node in local.controlplanes : format(
+      "https://%s:6443",
+      "${cidrhost("${var.network.block}/${var.network.suffix}", var.resource_alloc[node.role].address_start + node.idx)}"
+    )
+  ]
+}
+
 resource "terraform_data" "kubernetes_credentials" {
   depends_on = [data.talos_cluster_health.this]
   input = {
