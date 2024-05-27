@@ -11,6 +11,10 @@ terraform {
       source  = "integrations/github"
       version = "6.2.1"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.13.2"
+    }
     proxmox = {
       source  = "bpg/proxmox"
       version = "~> 0.50.0"

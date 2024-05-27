@@ -26,3 +26,13 @@ resource "github_repository_deploy_key" "this" {
   key        = tls_private_key.flux.public_key_openssh
   read_only  = "false"
 }
+
+resource "flux_bootstrap_git" "this" {
+  depends_on = [
+    github_repository_deploy_key.this,
+    time_sleep.wait_for_cluster_convergence
+  ]
+
+  embedded_manifests = true
+  path               = "services/flux"
+}

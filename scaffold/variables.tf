@@ -4,7 +4,7 @@ variable "node_name" {
   description = "Name of the Proxmox Host"
 }
 
-variable "storage" {
+variable "storage_pool" {
   type    = string
   default = "vmpool"
 }
@@ -26,19 +26,8 @@ variable "network" {
 }
 
 variable "cluster" {
-  type = object({
-    controlplane_count = number
-    worker_count       = number
-  })
-  default = {
-    controlplane_count = 3
-    worker_count       = 3
-  }
-}
-
-
-variable "resource_alloc" {
   type = map(object({
+    count         = number
     memory        = number
     vcpus         = number
     disk_size     = number
@@ -46,12 +35,14 @@ variable "resource_alloc" {
   }))
   default = {
     "controlplane" = {
+      count         = 3
       memory        = 4096
       vcpus         = 4
       disk_size     = 48
       address_start = 30
     }
     "worker" = {
+      count         = 3
       memory        = 16384
       vcpus         = 8
       disk_size     = 64
