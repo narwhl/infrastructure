@@ -91,6 +91,27 @@ data "talos_machine_configuration" "machines" {
           {
             name     = "cilium"
             contents = data.helm_template.cilium.manifest
+          },
+          {
+            name = "oidc-viewer"
+            contents = yamlencode({
+              apiVersion = "rbac.authorization.k8s.io/v1"
+              kind       = "ClusterRoleBinding"
+              metadata = {
+                name = "oidc-viewer"
+              }
+              roleRef = {
+                apiGroup = "rbac.authorization.k8s.io"
+                kind     = "ClusterRole"
+                name     = "system:service-account-issuer-discovery"
+              }
+              subjects = [
+                {
+                  kind = "Group"
+                  name = "system:unauthenticated"
+                }
+              ]
+            })
           }
         ]
       }
