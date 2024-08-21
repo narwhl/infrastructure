@@ -1,17 +1,5 @@
-locals {
-  cluster_name = data.external.env.result.GITHUB_REPOSITORY_OWNER
-  controlplanes = {
-    for controlplane in range(var.cluster.controlplane.count) : "k8s-c${controlplane}" => {
-      role = "controlplane"
-      idx  = controlplane
-    }
-  }
-  workers = {
-    for worker in range(var.cluster.worker.count) : "k8s-w${worker}" => {
-      role = "worker"
-      idx  = worker
-    }
-  }
+data "http" "talos_extensions" {
+  url = "https://factory.talos.dev/version/${local.distros.talos.version}/extensions/official"
 }
 
 data "http" "talos_customization" {
@@ -34,6 +22,23 @@ data "http" "talos_customization" {
   })
 }
 
+locals {
+  cluster_name = data.external.env.result.GITHUB_REPOSITORY_OWNER
+  controlplanes = {
+    for controlplane in range(var.cluster.controlplane.count) : "k8s-c${controlplane}" => {
+      role = "controlplane"
+      idx  = controlplane
+    }
+  }
+  workers = {
+    for worker in range(var.cluster.worker.count) : "k8s-w${worker}" => {
+      role = "worker"
+      idx  = worker
+    }
+  }
+  qemu_extension_url = [ for extension in jsondecode(data.http.talos_extensions.response_body): extension if extension.name == "siderolabs/qemu-guest-agent"][0].ref
+}
+
 resource "talos_machine_secrets" "this" {}
 
 data "talos_machine_configuration" "machines" {
@@ -48,7 +53,7 @@ data "talos_machine_configuration" "machines" {
         install = {
           extensions = [
             {
-              image = "ghcr.io/siderolabs/qemu-guest-agent:8.2.2"
+              image = local.qemu_extension_url
             }
           ]
         }
