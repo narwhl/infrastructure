@@ -93,10 +93,10 @@ data "talos_machine_configuration" "machines" {
           disabled = true
         }
         inlineManifests = [
-          {
-            name     = "cilium"
-            contents = data.helm_template.cilium.manifest
-          },
+          # {
+          #   name     = "cilium"
+          #   contents = data.helm_template.cilium.manifest
+          # },
           {
             name = "oidc-viewer"
             contents = yamlencode({
