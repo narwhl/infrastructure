@@ -8,4 +8,8 @@ resource "proxmox_virtual_environment_download_file" "talos" {
   file_name    = "talos.img"
   node_name    = "pve"
   url          = local.distros.talos.qemu.url
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.talos_release]
+  }
 }

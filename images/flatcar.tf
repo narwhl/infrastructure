@@ -8,4 +8,8 @@ resource "proxmox_virtual_environment_download_file" "flatcar" {
   file_name    = "flatcar.img"
   node_name    = "pve"
   url          = local.distros.flatcar.qemu.url
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.flatcar_release]
+  }
 }
