@@ -3,9 +3,9 @@ resource "terraform_data" "flatcar_release" {
 }
 
 resource "proxmox_virtual_environment_download_file" "flatcar" {
-  content_type       = "iso"
-  datastore_id       = "local"
-  file_name          = "flatcar.img"
-  node_name          = "pve"
-  url                = local.distros.flatcar.qemu.url
+  content_type = "iso"
+  datastore_id = "local"
+  file_name    = "flatcar.img"
+  node_name    = "pve"
+  url          = local.distros.flatcar.qemu.url
 }
