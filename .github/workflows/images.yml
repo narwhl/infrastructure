@@ -1,4 +1,4 @@
-name: Scaffolding
+name: Seed VM Images
 
 on:
   push:
