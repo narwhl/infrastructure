@@ -36,7 +36,7 @@ locals {
       idx  = worker
     }
   }
-  qemu_extension_url = [ for extension in jsondecode(data.http.talos_extensions.response_body): extension if extension.name == "siderolabs/qemu-guest-agent"][0].ref
+  qemu_extension_url = [for extension in jsondecode(data.http.talos_extensions.response_body) : extension if extension.name == "siderolabs/qemu-guest-agent"][0].ref
 }
 
 resource "talos_machine_secrets" "this" {}
