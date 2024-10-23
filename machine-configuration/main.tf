@@ -20,6 +20,6 @@ module "bastion" {
 }
 
 resource "vault_kv_secret" "bastion_config" {
-  path      = "secret"
+  path      = "secret/data/infrastructure/machine-configuration/bastion"
   data_json = jsonencode(module.bastion.config)
 }
