@@ -26,7 +26,7 @@ jobs:
     name: Generate VM configurations
     defaults:
       run:
-        working-directory: images
+        working-directory: machine-configuration
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
