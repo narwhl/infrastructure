@@ -19,7 +19,7 @@ module "bastion" {
   ssh_import_id = local.ssh_keys_import
 }
 
-resource "vault_kv_secret" "bastion_config" {
-  path      = "secret/data/infrastructure/machine-configuration/bastion"
+resource "vault_generic_secret" "bastion_config" {
+  path      = "secret/infrastructure/machine-configuration/bastion"
   data_json = jsonencode(module.bastion.config)
 }
