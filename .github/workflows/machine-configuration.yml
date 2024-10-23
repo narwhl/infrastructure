@@ -22,6 +22,7 @@ permissions:
 
 env:
   VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+  TERRAFORM_VAULT_SKIP_CHILD_TOKEN: true
 
 jobs:
   deploy:
