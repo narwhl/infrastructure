@@ -1,0 +1,77 @@
+name: Configure VM Templates
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - machine-configuration/**
+      - .github/workflows/machine-configuration.yml
+  workflow_dispatch:
+    inputs:
+      intent:
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Generate VM configurations
+    defaults:
+      run:
+        working-directory: images
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Security Token Service
+        uses: narwhl/imprint@v1
+        with:
+          scope: cloudflare:r2
+
+      - name: Retrieve secret from Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          method: jwt
+          path: actions
+          url: ${{ secrets.VAULT_ADDR }}
+          role: github-developer
+          exportToken: true
+          extraHeaders: |
+            CF-Access-Client-Id: ${{ env.CF_ACCESS_CLIENT_ID }}
+            CF-Access-Client-Secret: ${{ env.CF_ACCESS_CLIENT_SECRET }}
+
+      - name: Setup Terraform
+        uses: narwhl/setup-terraform@v1
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        if: github.event.inputs.intent == 'plan' || github.event_name == 'push'
+        run: terraform plan -no-color
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event.inputs.intent == 'apply'
+        run: terraform apply -auto-approve
+
+      - name: Terraform Destroy
+        if: github.ref == 'refs/heads/main' && github.event.inputs.intent == 'destroy'
+        run: terraform destroy -auto-approve
