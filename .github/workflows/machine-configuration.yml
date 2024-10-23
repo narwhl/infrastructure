@@ -20,6 +20,9 @@ permissions:
   contents: read
   id-token: write
 
+env:
+  VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
